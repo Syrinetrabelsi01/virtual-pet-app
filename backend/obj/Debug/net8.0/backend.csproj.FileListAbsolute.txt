@@ -29,6 +29,8 @@
 /Users/syrine/virtual-pet-app/backend/bin/Debug/net8.0/Microsoft.IdentityModel.Tokens.dll
 /Users/syrine/virtual-pet-app/backend/bin/Debug/net8.0/Microsoft.OpenApi.dll
 /Users/syrine/virtual-pet-app/backend/bin/Debug/net8.0/Mono.TextTemplating.dll
+/Users/syrine/virtual-pet-app/backend/bin/Debug/net8.0/MySqlConnector.dll
+/Users/syrine/virtual-pet-app/backend/bin/Debug/net8.0/Pomelo.EntityFrameworkCore.MySql.dll
 /Users/syrine/virtual-pet-app/backend/bin/Debug/net8.0/SQLitePCLRaw.batteries_v2.dll
 /Users/syrine/virtual-pet-app/backend/bin/Debug/net8.0/SQLitePCLRaw.core.dll
 /Users/syrine/virtual-pet-app/backend/bin/Debug/net8.0/SQLitePCLRaw.provider.e_sqlite3.dll
@@ -121,6 +123,7 @@
 /Users/syrine/virtual-pet-app/backend/obj/Debug/net8.0/backend.csproj.CoreCompileInputs.cache
 /Users/syrine/virtual-pet-app/backend/obj/Debug/net8.0/backend.MvcApplicationPartsAssemblyInfo.cs
 /Users/syrine/virtual-pet-app/backend/obj/Debug/net8.0/backend.MvcApplicationPartsAssemblyInfo.cache
+/Users/syrine/virtual-pet-app/backend/obj/Debug/net8.0/backend.sourcelink.json
 /Users/syrine/virtual-pet-app/backend/obj/Debug/net8.0/staticwebassets.build.json
 /Users/syrine/virtual-pet-app/backend/obj/Debug/net8.0/staticwebassets.development.json
 /Users/syrine/virtual-pet-app/backend/obj/Debug/net8.0/staticwebassets/msbuild.backend.Microsoft.AspNetCore.StaticWebAssets.props
@@ -135,5 +138,3 @@
 /Users/syrine/virtual-pet-app/backend/obj/Debug/net8.0/backend.pdb
 /Users/syrine/virtual-pet-app/backend/obj/Debug/net8.0/backend.genruntimeconfig.cache
 /Users/syrine/virtual-pet-app/backend/obj/Debug/net8.0/ref/backend.dll
-/Users/syrine/virtual-pet-app/backend/bin/Debug/net8.0/MySqlConnector.dll
-/Users/syrine/virtual-pet-app/backend/bin/Debug/net8.0/Pomelo.EntityFrameworkCore.MySql.dll
