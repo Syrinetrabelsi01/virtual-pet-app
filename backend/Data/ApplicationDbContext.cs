@@ -14,14 +14,14 @@ namespace backend.Data
         public DbSet<Panda> Pandas { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
-        {
-            base.OnModelCreating(builder);
+{
+    base.OnModelCreating(builder);
 
-            builder.Entity<AppUser>()
-                .HasOne(a => a.Panda)
-                .WithOne(p => p.AppUser)
-                .HasForeignKey<Panda>(p => p.AppUserId)
-                .OnDelete(DeleteBehavior.Cascade);
-        }
+    builder.Entity<Panda>()
+        .HasOne(p => p.AppUser)
+        .WithOne()
+        .HasForeignKey<Panda>(p => p.AppUserId);
+}
+
     }
 }

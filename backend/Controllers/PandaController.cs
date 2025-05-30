@@ -23,16 +23,15 @@ namespace backend.Controllers
         public async Task<IActionResult> GetPanda()
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            Console.WriteLine($"🧪 Token User ID: {userId}");
 
-            if (string.IsNullOrEmpty(userId))
-                return Unauthorized("User not found");
-
-            var panda = await _context.Pandas
-                .Where(p => p.AppUserId == userId)
-                .FirstOrDefaultAsync();
+            var panda = await _context.Pandas.FirstOrDefaultAsync(p => p.AppUserId == userId);
 
             if (panda == null)
+            {
+                Console.WriteLine("❌ No panda found for this user.");
                 return NotFound("Panda not found");
+            }
 
             return Ok(panda);
         }

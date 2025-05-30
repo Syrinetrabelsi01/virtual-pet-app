@@ -1,14 +1,17 @@
-using backend.Data;
-using backend.DTOs;
-using backend.Models;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Configuration;
+using System.Threading.Tasks;
+using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using Microsoft.IdentityModel.Tokens;
+using backend.Models;
+using backend.Data;
+using backend.DTOs;
 
-namespace backend.Controllers
+namespace virtual_pet_app.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
@@ -16,7 +19,7 @@ namespace backend.Controllers
     {
         private readonly UserManager<AppUser> _userManager;
         private readonly IConfiguration _config;
-        private readonly ApplicationDbContext _context;
+        private readonly backend.Data.ApplicationDbContext _context;
 
         public AuthController(UserManager<AppUser> userManager, IConfiguration config, ApplicationDbContext context)
         {
@@ -26,44 +29,44 @@ namespace backend.Controllers
         }
 
         [HttpPost("register")]
-        public async Task<IActionResult> Register(RegisterDTO dto)
+        public async Task<IActionResult> Register([FromBody] RegisterDTO model)
         {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
             var user = new AppUser
             {
-                UserName = dto.Username,
-                Email = dto.Email
+                UserName = model.Username,
+                Email = model.Email
             };
 
-            var result = await _userManager.CreateAsync(user, dto.Password);
+            var result = await _userManager.CreateAsync(user, model.Password);
+
             if (!result.Succeeded)
                 return BadRequest(result.Errors);
 
-            // ✅ Re-fetch to ensure proper ID
-            var createdUser = await _userManager.FindByNameAsync(dto.Username);
-            if (createdUser == null)
-                return StatusCode(500, "User creation failed unexpectedly.");
+            var createdUser = await _userManager.FindByNameAsync(model.Username);
 
-            // ✅ Create a panda and assign it
             var panda = new Panda
             {
-                Hunger = 60,
-                Energy = 60,
-                Happiness = 60,
+                Hunger = 50,
+                Happiness = 50,
+                Energy = 50,
                 AppUserId = createdUser.Id
             };
 
-            _context.Pandas.Add(panda);
+            await _context.Pandas.AddAsync(panda);
             await _context.SaveChangesAsync();
 
-            return Ok("User registered successfully and panda created.");
+            return Ok(new { message = "User and Panda created successfully" });
         }
 
         [HttpPost("login")]
-        public async Task<IActionResult> Login(LoginDTO dto)
+        public async Task<IActionResult> Login([FromBody] LoginDTO model)
         {
-            var user = await _userManager.FindByNameAsync(dto.Username);
-            if (user == null || !await _userManager.CheckPasswordAsync(user, dto.Password))
-                return Unauthorized("Invalid credentials");
+            var user = await _userManager.FindByNameAsync(model.Username);
+            if (user == null || !await _userManager.CheckPasswordAsync(user, model.Password))
+                return Unauthorized();
 
             var token = GenerateJwtToken(user);
             return Ok(new { token });
@@ -73,25 +76,24 @@ namespace backend.Controllers
         {
             var claims = new[]
             {
-                new Claim(JwtRegisteredClaimNames.Sub, user.UserName ?? ""),
+                new Claim(JwtRegisteredClaimNames.Sub, user.UserName),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                new Claim(ClaimTypes.NameIdentifier, user.Id ?? "") // ✅ This is the GUID ID (not username)
+                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString())
             };
 
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]!));
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+            var expiry = DateTime.UtcNow.AddHours(3);
 
             var token = new JwtSecurityToken(
                 issuer: _config["Jwt:Issuer"],
-                audience: _config["Jwt:Issuer"],
+                audience: _config["Jwt:Audience"],
                 claims: claims,
-                expires: DateTime.UtcNow.AddHours(1),
+                expires: expiry,
                 signingCredentials: creds
             );
 
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
-
-
     }
 }
